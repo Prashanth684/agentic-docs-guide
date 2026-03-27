@@ -12,8 +12,12 @@ This directory contains the complete framework for creating AI-agent-friendly do
 |------|---------|----------|
 | **AGENTIC_DOCS_FRAMEWORK.md** | Philosophy, principles, and overview | Humans understanding WHY |
 | **AGENTIC_DOCS_RULEBOOK.md** | Step-by-step implementation guide | AI agents doing the WORK |
-| **VALIDATION_SCRIPT.sh** | Automated validation script | Both (run after implementation) |
+| **SECOND_PASS_GUIDE.md** | Metrics-driven refinement to >80% quality | AI agents (after first pass) |
+| **METRICS_GUIDE.md** | Metrics measurement and validation | Both (run to measure quality) |
+| **SCORING_GUIDE.md** | Understanding quality scores (NEW!) | Both (interpret results) |
+| **VALIDATION_SCRIPT.sh** | Structure validation script | Both (run after implementation) |
 | **AGENTIC_DOCS_README.md** | This file - navigation guide | Both |
+| **scripts/** | Metrics measurement tools | Both (copy to your repo) |
 
 ---
 
@@ -23,12 +27,20 @@ This directory contains the complete framework for creating AI-agent-friendly do
 
 **Your instructions are simple:**
 
+**First Pass (Structure):**
 1. **Read** [AGENTIC_DOCS_RULEBOOK.md](./AGENTIC_DOCS_RULEBOOK.md) in full
 2. **Follow** each phase step-by-step
 3. **Replace** ALL placeholders with actual values (see placeholder conventions in RULEBOOK)
 4. **Validate** using `./VALIDATION_SCRIPT.sh`
 5. **Fix** any errors reported
 6. **Commit** only when validation passes
+
+**Second Pass (Quality):**
+7. **Run metrics**: `./agentic/scripts/measure-all-metrics.sh --html`
+8. **Read** [SECOND_PASS_GUIDE.md](./SECOND_PASS_GUIDE.md) in full
+9. **Fix gaps**: Navigation depth, context budget, coverage
+10. **Re-validate**: Achieve >90% quality score
+11. **Commit** improvements
 
 **Critical rules:**
 - ✅ NEVER leave `[PLACEHOLDERS]` in final documentation
@@ -130,7 +142,7 @@ After following this framework, your repository will have:
 
 ## 📋 Validation
 
-### Automated Validation
+### Structure Validation
 
 ```bash
 # Run this before committing
@@ -141,6 +153,27 @@ After following this framework, your repository will have:
 #    Errors: 0
 #    Warnings: 0
 ```
+
+### Metrics Validation (NEW!)
+
+```bash
+# Copy metrics scripts to your repo
+mkdir -p agentic/scripts
+cp scripts/*.py agentic/scripts/
+cp scripts/*.sh agentic/scripts/
+chmod +x agentic/scripts/*.sh
+
+# Run all metrics
+./agentic/scripts/measure-all-metrics.sh
+
+# Generate HTML dashboard
+./agentic/scripts/measure-all-metrics.sh --html
+
+# Validate metrics are correct
+./agentic/scripts/test-metrics.sh
+```
+
+**See**: [METRICS_GUIDE.md](./METRICS_GUIDE.md) for complete documentation
 
 ### Manual Checks
 
