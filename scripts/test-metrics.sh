@@ -2,6 +2,18 @@
 # Validation tests for metrics scripts
 # Run this to verify metrics calculations are correct
 
+# Sanity check: detect if being run with wrong interpreter
+if [ -z "$BASH_VERSION" ]; then
+    echo "❌ ERROR: This is a Bash script, not a Python script"
+    echo ""
+    echo "Correct usage:"
+    echo "  ./agentic/scripts/test-metrics.sh  ✅"
+    echo "  bash agentic/scripts/test-metrics.sh  ✅"
+    echo ""
+    echo "NOT: python3 test-metrics.sh  ❌"
+    exit 1
+fi
+
 set -e
 
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)

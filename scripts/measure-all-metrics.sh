@@ -11,6 +11,23 @@
 #   ./scripts/measure-all-metrics.sh                    # Display metrics only
 #   ./scripts/measure-all-metrics.sh --generate-reports # Save to files
 
+# Sanity check: detect if being run with wrong interpreter
+if [ -z "$BASH_VERSION" ]; then
+    echo "❌ ERROR: This is a Bash script, not a Python script"
+    echo ""
+    echo "You tried to run:"
+    echo "  python3 measure-all-metrics.sh  ❌ WRONG"
+    echo ""
+    echo "Correct usage:"
+    echo "  ./agentic/scripts/measure-all-metrics.sh  ✅ CORRECT"
+    echo "  bash agentic/scripts/measure-all-metrics.sh  ✅ CORRECT"
+    echo ""
+    echo "File types:"
+    echo "  .sh files = Bash scripts (use ./ or bash)"
+    echo "  .py files = Python scripts (use python3)"
+    exit 1
+fi
+
 set -e
 
 # Find repo root

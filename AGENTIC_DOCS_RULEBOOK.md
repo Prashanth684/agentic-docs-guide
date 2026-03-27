@@ -2572,6 +2572,179 @@ find agentic/exec-plans/active -name "*.md" | wc -l
 - [ ] At least 1 active exec-plan exists (verify with: `find agentic/exec-plans/active -name "*.md" | wc -l`)
 - [ ] Freshness score ≥ 18/20 (indicates initial content created)
 
+### Phase 7: Generate Metrics Dashboard (FIRST PASS COMPLETION) 🎯
+
+**Purpose**: Generate metrics dashboard to visualize quality score and identify areas for improvement.
+
+#### Step 7.1: Run All Metrics with Dashboard Generation
+
+```bash
+# Navigate to repository root
+cd "$(git rev-parse --show-toplevel)"
+
+# Generate comprehensive metrics with HTML dashboard
+./agentic/scripts/measure-all-metrics.sh --html
+```
+
+**Output**:
+- Terminal shows summary scores for each metric
+- HTML dashboard created at `agentic/metrics-dashboard.html`
+
+#### Step 7.2: Review Dashboard
+
+```bash
+# Open dashboard in browser
+firefox agentic/metrics-dashboard.html
+# Or: chrome agentic/metrics-dashboard.html
+# Or: open agentic/metrics-dashboard.html  (macOS)
+```
+
+**Dashboard shows**:
+- **Overall Quality Score**: 0-100 with color coding
+- **Navigation Depth**: Unreachable documents, docs exceeding 3 hops
+- **Context Budget**: Workflows over 700 lines
+- **Structure Compliance**: Missing required files
+- **Documentation Coverage**: ADR/concept/exec-plan counts
+
+#### Step 7.3: Interpret Your Score
+
+**90-100 (Excellent)** 🟢:
+- ✅ First pass complete - no further action needed
+- Consider sharing as example for other teams
+- Set up CI to maintain quality
+- **Second pass**: Optional (for perfectionists only)
+
+**80-89 (Good)** 🔵:
+- ✅ First pass complete - acceptable quality
+- Minor issues identified in dashboard
+- **Second pass**: Recommended if you want to reach 90+
+- **Decision point**: Review dashboard, decide if improvements worth effort
+
+**70-79 (Fair)** 🟡:
+- ⚠️ First pass complete but significant gaps
+- Dashboard highlights specific issues to fix
+- **Second pass**: Strongly recommended
+- **Action**: Follow [SECOND_PASS_GUIDE.md](./SECOND_PASS_GUIDE.md) to improve
+
+**60-69 (Poor)** 🟠:
+- ⚠️ First pass has major gaps
+- Review dashboard for critical missing elements
+- **Second pass**: Required
+- **Action**: Fix critical issues first, then run second pass
+
+**<60 (Critical)** 🔴:
+- ❌ First pass incomplete or incorrect
+- Dashboard shows fundamental structural problems
+- **Action**: Review AGENTIC_DOCS_RULEBOOK.md, fix missing required elements
+- Re-run metrics after fixes
+
+#### Step 7.4: Document Your Score in QUALITY_SCORE.md
+
+Update the "Recent Changes and Progress" section:
+
+```markdown
+### Latest Update: YYYY-MM-DD
+
+**Score**: 0/100 → XX/100 (first pass implementation)
+
+**What Changed**:
+- ✅ Created complete agentic documentation structure
+- ✅ Created AGENTS.md and ARCHITECTURE.md
+- ✅ Created X ADRs, Y concept docs
+- ✅ Generated metrics dashboard
+
+**Next Steps**:
+[Based on score, one of:]
+- Score 90+: Maintain quality via CI
+- Score 80-89: Consider second pass for optimization
+- Score 70-79: Run second pass (SECOND_PASS_GUIDE.md)
+- Score <70: Fix critical gaps first
+```
+
+#### Step 7.5: Decide on Second Pass
+
+**Review the dashboard and choose**:
+
+**Option A: Skip Second Pass** (score 85+, acceptable quality)
+```bash
+# Commit first pass implementation
+git add agentic/ AGENTS.md ARCHITECTURE.md .github/
+git commit -m "docs: implement agentic documentation framework
+
+- Created complete structure (score: XX/100)
+- Added AGENTS.md (YY lines), ARCHITECTURE.md
+- Created Z ADRs, W concept docs
+- Generated metrics dashboard
+
+See agentic/metrics-dashboard.html for details
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
+**Option B: Run Second Pass** (score <85, want improvement)
+```bash
+# Proceed to second pass refinement
+# See SECOND_PASS_GUIDE.md for metrics-driven improvements:
+# - Fix navigation depth violations
+# - Optimize context budgets
+# - Add missing coverage
+# Target: 90+/100 (Excellent)
+```
+
+**Option C: Fix Critical Gaps** (score <70)
+```bash
+# Review dashboard for missing required elements
+# Fix critical issues before second pass
+# Common gaps:
+# - Missing required top-level files (DESIGN.md, TESTING.md, etc.)
+# - No ADRs or concept docs
+# - AGENTS.md over 150 lines
+# - Many broken links
+```
+
+#### Step 7.6: Archive Dashboard
+
+```bash
+# Add dashboard to git (optional - large file)
+git add agentic/metrics-dashboard.html
+
+# Or add to .gitignore (regenerate as needed)
+echo "agentic/metrics-dashboard.html" >> .gitignore
+```
+
+**Validation**:
+- [ ] Metrics dashboard generated
+- [ ] Dashboard reviewed in browser
+- [ ] Score documented in QUALITY_SCORE.md
+- [ ] Decision made: Skip second pass / Run second pass / Fix gaps
+
+---
+
+## 🎉 First Pass Complete!
+
+**Congratulations!** You've completed the initial agentic documentation implementation.
+
+**What you achieved**:
+- ✅ Created navigable documentation structure
+- ✅ Documented core concepts and architecture
+- ✅ Established patterns (ADRs, exec-plans)
+- ✅ Set up validation and metrics
+
+**Next steps based on your score**:
+
+| Score | Rating | Next Step |
+|-------|--------|-----------|
+| 90-100 | Excellent 🟢 | Set up CI, commit, done! |
+| 80-89 | Good 🔵 | Optional: [SECOND_PASS_GUIDE.md](./SECOND_PASS_GUIDE.md) |
+| 70-79 | Fair 🟡 | Recommended: [SECOND_PASS_GUIDE.md](./SECOND_PASS_GUIDE.md) |
+| 60-69 | Poor 🟠 | Required: Fix gaps, then second pass |
+| <60 | Critical 🔴 | Fix critical issues, re-run first pass |
+
+**Questions?**
+- Dashboard unclear? See [SCORING_GUIDE.md](./SCORING_GUIDE.md)
+- Metrics confusing? See [METRICS_GUIDE.md](./METRICS_GUIDE.md)
+- Need optimization? See [SECOND_PASS_GUIDE.md](./SECOND_PASS_GUIDE.md)
+
 ---
 
 ## Quick Reference

@@ -11,12 +11,16 @@ A structured approach to organizing repository knowledge for AI agents and human
 cp -r /path/to/agentic-guide/VALIDATION_SCRIPT.sh your-repo/
 cp -r /path/to/agentic-guide/scripts/ your-repo/agentic/scripts/
 
-# 2. Create structure
-cd your-repo
-./agentic/scripts/measure-all-metrics.sh --help
-
-# 3. Follow the rulebook
+# 2. Follow the rulebook (creates structure + content)
 # See AGENTIC_DOCS_RULEBOOK.md
+
+# 3. Generate metrics dashboard (end of first pass)
+cd your-repo
+./agentic/scripts/measure-all-metrics.sh --html
+firefox agentic/metrics-dashboard.html
+
+# 4. Based on score, decide if second pass needed
+# See dashboard for recommendations
 ```
 
 ### For Existing Repositories
@@ -28,9 +32,15 @@ cat AGENTIC_DOCS_FRAMEWORK.md
 # 2. Follow installation guide
 cat INSTALLATION.md
 
-# 3. Validate and measure
+# 3. Validate and generate dashboard
 ./VALIDATION_SCRIPT.sh
-./agentic/scripts/measure-all-metrics.sh
+./agentic/scripts/measure-all-metrics.sh --html
+firefox agentic/metrics-dashboard.html  # Review your score
+
+# 4. Decide: Second pass needed?
+# - Score 90+: Done!
+# - Score 80-89: Optional second pass
+# - Score <80: Run SECOND_PASS_GUIDE.md
 ```
 
 ## Documentation
@@ -55,6 +65,7 @@ cat INSTALLATION.md
 - **Architectural decisions**: Record why, not just what
 - **Mechanical validation**: CI enforces quality
 - **Measurable metrics**: Navigation depth, context budget, coverage
+- **Visual dashboard**: HTML dashboard shows quality score at a glance
 
 ## Features
 
@@ -127,7 +138,7 @@ $EDITOR agentic/scripts/measure-context-budget.py
 **NEW**: Automated measurement of documentation quality!
 
 ```bash
-# Run all metrics
+# Run all metrics (shell scripts - use ./ not python3)
 ./agentic/scripts/measure-all-metrics.sh
 
 # Generate HTML dashboard
@@ -136,6 +147,8 @@ $EDITOR agentic/scripts/measure-context-budget.py
 # Validate calculations
 ./agentic/scripts/test-metrics.sh
 ```
+
+**Note**: These are shell scripts (`.sh`), not Python. Use `./script.sh` or `bash script.sh`, **not** `python3 script.sh`.
 
 **Measures**:
 - **Navigation Depth**: Link distance from AGENTS.md (target: ≤3 hops)

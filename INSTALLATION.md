@@ -187,21 +187,45 @@ Follow the [AGENTIC_DOCS_RULEBOOK.md](./AGENTIC_DOCS_RULEBOOK.md) to populate ea
 # ✅ VALIDATION PASSED
 ```
 
-### Step 6: Run Metrics
+### Step 6: Run Metrics and Generate Dashboard
+
+**Purpose**: Generate metrics dashboard to visualize first pass quality and decide if second pass needed.
+
+**IMPORTANT**: These are **shell scripts (.sh)**, not Python scripts. Use `./` or `bash`, NOT `python3`.
 
 ```bash
-# Measure current state
-./agentic/scripts/measure-all-metrics.sh
-
-# Generate HTML dashboard
+# ✅ CORRECT - Run the shell script directly (uses #!/bin/bash shebang)
 ./agentic/scripts/measure-all-metrics.sh --html
-firefox agentic/metrics-dashboard.html
 
-# Validate metrics calculations
+# ❌ WRONG - DO NOT run with python3 (will fail with syntax errors)
+# python3 agentic/scripts/measure-all-metrics.sh  # DON'T DO THIS!
+
+# Open dashboard in browser
+firefox agentic/metrics-dashboard.html
+# Or: chrome agentic/metrics-dashboard.html
+# Or: open agentic/metrics-dashboard.html  (macOS)
+
+# ✅ Validate metrics calculations (also a shell script)
 ./agentic/scripts/test-metrics.sh
 ```
 
+**Dashboard shows**:
+- Overall quality score (0-100)
+- Navigation depth issues
+- Context budget violations
+- Documentation coverage gaps
+
+**Interpret your score**:
+- **90-100** (Excellent 🟢): First pass complete, no second pass needed
+- **80-89** (Good 🔵): First pass complete, second pass optional
+- **70-79** (Fair 🟡): Second pass recommended
+- **<70** (Poor/Critical 🟠🔴): Fix gaps, then run second pass
+
 **Expected**: If you customized workflows in Step 2 correctly, all workflow files should be found. If you see "Missing files" warnings, create those concept docs.
+
+**Next step decision**:
+- Score 85+: Proceed to Step 8 (commit)
+- Score <85: Consider [SECOND_PASS_GUIDE.md](./SECOND_PASS_GUIDE.md) for optimization
 
 ### Step 6.1: Document Framework Usage (Recommended)
 
@@ -348,9 +372,11 @@ ln -s /path/to/agentic-guide/scripts agentic/scripts
 - [ ] Create 2-3 ADRs (Step 4)
 - [ ] Create 1 active exec-plan (Step 4)
 - [ ] Run `./VALIDATION_SCRIPT.sh` (should pass) (Step 5)
-- [ ] Run `./agentic/scripts/measure-all-metrics.sh` (Step 6)
+- [ ] **Generate metrics dashboard** `./agentic/scripts/measure-all-metrics.sh --html` (Step 6)
+- [ ] **Review dashboard** in browser, check score (Step 6)
 - [ ] Run `./agentic/scripts/test-metrics.sh` (should pass) (Step 6)
 - [ ] Create `USING_FRAMEWORK_SCRIPTS.md` (Step 6.1 - Recommended)
+- [ ] **Decide**: Second pass needed based on score? (Step 6)
 - [ ] Set up CI workflow (Step 8)
 - [ ] **Benchmark** (25-50 tasks) to validate impact
 

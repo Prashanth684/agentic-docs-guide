@@ -10,10 +10,19 @@
 
 ## Prerequisites
 
-✅ You have completed [AGENTIC_DOCS_RULEBOOK.md](./AGENTIC_DOCS_RULEBOOK.md) implementation
+✅ You have completed [AGENTIC_DOCS_RULEBOOK.md](./AGENTIC_DOCS_RULEBOOK.md) implementation (first pass)
+✅ **You have generated the metrics dashboard** (`./agentic/scripts/measure-all-metrics.sh --html`)
+✅ **You have reviewed your score** in `agentic/metrics-dashboard.html`
+✅ **Your score is <90** and you want to improve it (otherwise second pass is optional)
 ✅ Structure validation passes (`./VALIDATION_SCRIPT.sh`)
-✅ Metrics scripts are installed (`agentic/scripts/`)
-✅ **You have customized workflows** (see Phase 0 below)
+✅ Metrics scripts are installed and workflows customized
+
+**Why run second pass?**
+- Score 80-89 (Good): Optional, for reaching Excellent (90+)
+- Score 70-79 (Fair): Recommended, to reach Good/Excellent
+- Score <70 (Poor/Critical): Required, significant gaps exist
+
+**If your score is 90+**: Congratulations! Second pass is optional - you already have excellent documentation.
 
 ---
 

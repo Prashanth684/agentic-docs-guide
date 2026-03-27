@@ -16,6 +16,30 @@ These scripts provide **measurable, automated validation** that agentic document
 | `measure-all-metrics.sh` | Comprehensive metrics runner | ⚠️ Optional |
 | `test-metrics.sh` | Validation test suite | ✅ Yes |
 
+## ⚠️ Common Mistakes
+
+**DON'T run .sh files with python:**
+
+```bash
+# ❌ WRONG - will cause confusing syntax errors
+python3 measure-all-metrics.sh
+cd agentic/scripts && python3 measure-all-metrics.sh --html
+
+# ✅ CORRECT - use bash or ./
+./agentic/scripts/measure-all-metrics.sh
+bash agentic/scripts/measure-all-metrics.sh --html
+```
+
+**File types:**
+- `.sh` files = **Bash scripts** → use `./script.sh` or `bash script.sh`
+- `.py` files = **Python scripts** → use `python3 script.py`
+
+**Typical error when using wrong interpreter:**
+```
+SyntaxError: closing parenthesis ')' does not match opening parenthesis '['
+```
+This means you tried to run a `.sh` file with `python3`.
+
 ## Installation
 
 ### For Repository Adoption
