@@ -11,11 +11,18 @@
 ## Prerequisites
 
 ✅ You have completed [AGENTIC_DOCS_RULEBOOK.md](./AGENTIC_DOCS_RULEBOOK.md) implementation (first pass)
-✅ **You have generated the metrics dashboard** (`./agentic/scripts/measure-all-metrics.sh --html`)
-✅ **You have reviewed your score** in `agentic/metrics-dashboard.html`
+✅ **⚠️ CRITICAL**: You have run Phase 7 from the rulebook (generated metrics dashboard)
+✅ **You have the dashboard file** `agentic/metrics-dashboard.html` from first pass
+✅ **You have reviewed your ACTUAL MEASURED score** in the dashboard (not an estimate!)
 ✅ **Your score is <90** and you want to improve it (otherwise second pass is optional)
 ✅ Structure validation passes (`./VALIDATION_SCRIPT.sh`)
-✅ Metrics scripts are installed and workflows customized
+✅ Metrics scripts are installed at `agentic/scripts/`
+
+**⚠️ If you skipped Phase 7 in first pass:**
+- Go back to [AGENTIC_DOCS_RULEBOOK.md Phase 7](./AGENTIC_DOCS_RULEBOOK.md#phase-7-generate-metrics-dashboard-first-pass-completion-)
+- Run `./agentic/scripts/measure-all-metrics.sh --html`
+- Review the dashboard to get your baseline score
+- Then return here with your actual measured score
 
 **Why run second pass?**
 - Score 80-89 (Good): Optional, for reaching Excellent (90+)
@@ -521,20 +528,37 @@ Should show:
 
 ---
 
-## Phase 5: Final Validation
+## Phase 5: Final Validation and Metrics Re-measurement
 
-### Step 5.1: Re-run All Metrics
+⚠️ **MANDATORY**: You MUST re-run Phase 7 (metrics dashboard) to measure improvement from second pass.
+
+### Step 5.1: Re-run All Metrics (Phase 7 from Rulebook)
+
+This is the **same Phase 7 from the first pass** - you're running it again to measure improvement.
 
 ```bash
+# Navigate to repository root
+cd "$(git rev-parse --show-toplevel)"
+
+# Re-generate metrics dashboard with improvements
 ./agentic/scripts/measure-all-metrics.sh --html
 ```
 
-### Step 5.2: Check Overall Score
+**What this does**:
+- Re-calculates all metrics based on your second pass changes
+- Generates updated `agentic/metrics-dashboard.html`
+- Shows before/after comparison in your commit message
 
-Open dashboard:
+### Step 5.2: Review Updated Dashboard
+
+Open the regenerated dashboard:
 ```bash
 firefox agentic/metrics-dashboard.html
+# Or: chrome agentic/metrics-dashboard.html
+# Or: open agentic/metrics-dashboard.html  (macOS)
 ```
+
+**Check improvements**:
 
 **Target scores:**
 - 🟢 Navigation Depth: 100 (all docs ≤3 hops, 0 unreachable) or 🔵 50 (1-2 minor violations)
@@ -559,16 +583,39 @@ Should show:
 ✓ ALL TESTS PASSED
 ```
 
-### Step 5.4: Commit Changes
+### Step 5.4: Update QUALITY_SCORE.md with New Measurements
+
+Document your improvement in `agentic/QUALITY_SCORE.md`:
+
+```markdown
+### Second Pass Completion: YYYY-MM-DD
+
+**Score Change**: X/100 → Y/100 (+Z points)
+
+**What Changed**:
+- Fixed navigation depth violations (before: N unreachable, after: M unreachable)
+- Fixed context budget violations (before: N over, after: M over)
+- Added N ADRs, M concepts, K exec-plans
+
+**Measured by**: ./agentic/scripts/measure-all-metrics.sh --html
+**Dashboard**: agentic/metrics-dashboard.html (generated YYYY-MM-DD)
+```
+
+### Step 5.5: Commit Changes
+
+⚠️ **Use your ACTUAL MEASURED scores** from the dashboard (not estimates!)
 
 ```bash
 git add agentic/ AGENTS.md ARCHITECTURE.md
-git commit -m "docs: second pass - improve metrics to >80%
+git commit -m "docs: second pass - improve metrics to Y/100
 
-- Fixed navigation depth: linked 19 unreachable docs
-- Fixed context budget: split large concept docs (saved 260 lines)
-- Added 2 ADRs, 1 concept doc, 1 exec-plan
-- Overall quality score: X/100 → Y/100
+- Fixed navigation depth: linked N unreachable docs
+- Fixed context budget: split large files (saved N lines)
+- Added N ADRs, M concepts, K exec-plans
+- Overall quality score: X/100 → Y/100 (+Z improvement)
+
+Measured by: ./agentic/scripts/measure-all-metrics.sh --html
+Dashboard: agentic/metrics-dashboard.html
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 ```
@@ -616,31 +663,42 @@ After completing second pass:
 - [ ] At least 3 ADRs documented
 - [ ] At least 3 domain concepts documented
 - [ ] At least 1 active exec-plan
-- [ ] Overall quality score ≥80% (Good rating)
+- [ ] **⚠️ MANDATORY**: Metrics dashboard regenerated (`./agentic/scripts/measure-all-metrics.sh --html`)
+- [ ] **⚠️ MANDATORY**: Dashboard reviewed in browser and actual score documented
+- [ ] Overall quality score ≥80% (Good rating) - from ACTUAL measurement, not estimate
 - [ ] `test-metrics.sh` passes all tests
-- [ ] Dashboard generated and reviewed
-- [ ] Changes committed
+- [ ] QUALITY_SCORE.md updated with actual measured scores
+- [ ] Changes committed with actual measured scores in commit message
+
+---
+
+## 🎉 Second Pass Complete!
+
+**⚠️ CONFIRMATION**: Did you run Phase 5 Step 5.1 (re-run metrics dashboard)?
+- ❌ **NO** → Go back and run `./agentic/scripts/measure-all-metrics.sh --html` now
+- ✅ **YES** → Continue below with your actual measured improvement
 
 ---
 
 ## Next Steps
 
-**For repositories <70% after second pass:**
+**For repositories <70% after second pass (measured):**
 - Run 25-50 task benchmark to validate framework is helping
 - Consider if framework is appropriate for your repo type
 - Review AGENTIC_DOCS_FRAMEWORK.md for philosophy
 
-**For repositories 70-89% (Fair/Good):**
+**For repositories 70-89% (Fair/Good) - measured:**
 - Acceptable for most repositories
 - Consider fixing remaining violations if they're easy
 - Set up CI to prevent regression (see INSTALLATION.md)
-- Monitor metrics monthly
+- Monitor metrics monthly (re-run dashboard quarterly)
 
-**For repositories ≥90% (Excellent):**
+**For repositories ≥90% (Excellent) - measured:**
 - Outstanding! Zero violations
 - Set up CI to maintain quality (see INSTALLATION.md)
 - Share as example for other teams
 - Update as codebase evolves
+- Re-run dashboard quarterly to track drift
 
 ---
 

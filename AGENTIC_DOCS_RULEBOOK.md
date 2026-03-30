@@ -44,7 +44,8 @@ YYYY-MM-DD            → Actual dates (e.g., "2026-03-18")
 @[username]           → GitHub usernames (e.g., "@johndoe")
 #[1234]               → Issue numbers (e.g., "#5628")
 [path/to/file.ext]    → File paths (e.g., "pkg/controller/reconcile.go")
-[line]                → Line numbers (e.g., "156")
+
+⚠️ **IMPORTANT**: DO NOT include line numbers in code references. Line numbers change frequently and create maintenance burden. Use file paths only.
 ```
 
 ### Validation Command (Run After Completing Documentation)
@@ -299,6 +300,44 @@ Add a document here when:
 - [ ] Each index explains the directory's purpose
 - [ ] Navigation is clear
 - [ ] All 6 required top-level files exist (DESIGN.md, DEVELOPMENT.md, TESTING.md, RELIABILITY.md, SECURITY.md, QUALITY_SCORE.md)
+
+#### Step 2.3: Copy Metrics Scripts (REQUIRED for Phase 7)
+
+**Task**: Copy the metrics measurement scripts from agentic-guide to your repository.
+
+**Actions**:
+```bash
+# Set the path to agentic-guide (adjust if needed)
+GUIDE_PATH="/home/psundara/ws/src/github.com/openshift/agentic-guide"
+
+# Create scripts directory
+mkdir -p agentic/scripts
+
+# Copy metrics scripts
+cp "$GUIDE_PATH/scripts/"*.py agentic/scripts/
+cp "$GUIDE_PATH/scripts/"*.sh agentic/scripts/
+chmod +x agentic/scripts/*.sh
+
+# Verify scripts were copied
+ls -la agentic/scripts/
+```
+
+**Expected files**:
+- `agentic/scripts/measure-all-metrics.sh` - Main metrics runner
+- `agentic/scripts/measure-*.py` - Individual metric scripts
+
+**Note**: These scripts are needed for Phase 7 (metrics dashboard generation). Without them, you cannot complete the first pass.
+
+**Alternative**: If you prefer, you can run the scripts directly from agentic-guide:
+```bash
+/path/to/agentic-guide/scripts/measure-all-metrics.sh --html
+```
+
+**Validation**:
+- [ ] Scripts directory created at `agentic/scripts/`
+- [ ] All `.sh` and `.py` files copied
+- [ ] Scripts are executable (`chmod +x`)
+- [ ] `./agentic/scripts/measure-all-metrics.sh --help` works
 
 ---
 
@@ -861,7 +900,7 @@ transitions:
 **Rules**:
 1. **Start with YAML frontmatter** - Machine-readable metadata
 2. **Clear definition first** - Don't assume knowledge
-3. **Show code locations** - File and line numbers
+3. **Show code locations** - File paths only (DO NOT include line numbers - they change frequently)
 4. **Include examples** - Real, runnable examples
 5. **Link relationships** - Bidirectional links
 
@@ -1344,7 +1383,7 @@ in initial implementation.
 
 - [ ] Quality score ≥ 95/100
 - [ ] CI validation passes on all PRs
-- [ ] All code references include specific line numbers
+- [ ] All code references use file paths (no line numbers)
 - [ ] Component documentation complete for all major components
 - [ ] No broken links
 - [ ] Future enhancements tracked in tech debt tracker
@@ -1368,7 +1407,7 @@ No code changes - documentation-only improvements.
 ### Tasks
 
 1. Add component documentation
-2. Add specific line numbers to code references
+2. Add file path references to code (no line numbers)
 3. Create workflow diagrams
 4. Run CI and fix validation errors
 
@@ -1380,7 +1419,7 @@ No code changes - documentation-only improvements.
 - [ ] Create component doc for [Component C]
 
 ### Phase 2: Code References (Week 2)
-- [ ] Audit all code references for missing line numbers
+- [ ] Audit all code references for file paths (ensure no line numbers)
 - [ ] Update references in ARCHITECTURE.md
 - [ ] Update references in concept docs
 
@@ -2564,23 +2603,40 @@ find agentic/exec-plans/active -name "*.md" | wc -l
 
 ### Final Validation ✅
 - [ ] All CI checks pass
-- [ ] Quality score ≥ 85% (with initial content) or 75% (templates only - not recommended)
 - [ ] No broken links
 - [ ] AGENTS.md < 150 lines
 - [ ] Agent can navigate entire repo from AGENTS.md in ≤3 hops
 - [ ] At least 2-3 ADRs exist (verify with: `find agentic/decisions -name "adr-*.md" -not -name "*template*" | wc -l`)
 - [ ] At least 1 active exec-plan exists (verify with: `find agentic/exec-plans/active -name "*.md" | wc -l`)
-- [ ] Freshness score ≥ 18/20 (indicates initial content created)
+
+⚠️ **STOP!** Before proceeding to "First Pass Complete", you **MUST** run Phase 7 below.
+
+---
 
 ### Phase 7: Generate Metrics Dashboard (FIRST PASS COMPLETION) 🎯
 
+⚠️ **THIS PHASE IS MANDATORY** - Do not skip! This measures your actual quality score.
+
 **Purpose**: Generate metrics dashboard to visualize quality score and identify areas for improvement.
+
+**Prerequisites**:
+- ✅ Scripts copied in Phase 2 Step 2.3 (required!)
+- ✅ All phases 1-6 completed
+- ✅ Repository at `git rev-parse --show-toplevel` is your target repo
+
+**If you skipped Step 2.3**: Go back and copy the scripts from agentic-guide first, or run them directly from agentic-guide.
 
 #### Step 7.1: Run All Metrics with Dashboard Generation
 
 ```bash
 # Navigate to repository root
 cd "$(git rev-parse --show-toplevel)"
+
+# Verify scripts exist (if missing, go back to Phase 2 Step 2.3)
+if [ ! -f "./agentic/scripts/measure-all-metrics.sh" ]; then
+    echo "❌ ERROR: Scripts not found. Run Phase 2 Step 2.3 first."
+    exit 1
+fi
 
 # Generate comprehensive metrics with HTML dashboard
 ./agentic/scripts/measure-all-metrics.sh --html
@@ -2589,6 +2645,11 @@ cd "$(git rev-parse --show-toplevel)"
 **Output**:
 - Terminal shows summary scores for each metric
 - HTML dashboard created at `agentic/metrics-dashboard.html`
+
+**If scripts fail to run**: Make sure you copied them correctly in Phase 2 Step 2.3. You can also run them directly from agentic-guide:
+```bash
+/path/to/agentic-guide/scripts/measure-all-metrics.sh --html
+```
 
 #### Step 7.2: Review Dashboard
 
@@ -2713,10 +2774,12 @@ echo "agentic/metrics-dashboard.html" >> .gitignore
 ```
 
 **Validation**:
-- [ ] Metrics dashboard generated
-- [ ] Dashboard reviewed in browser
-- [ ] Score documented in QUALITY_SCORE.md
-- [ ] Decision made: Skip second pass / Run second pass / Fix gaps
+- [ ] Metrics dashboard generated (`agentic/metrics-dashboard.html` exists)
+- [ ] Dashboard reviewed in browser (opened and inspected)
+- [ ] Actual score from dashboard documented in QUALITY_SCORE.md (not estimated!)
+- [ ] Decision made based on actual score: Skip second pass / Run second pass / Fix gaps
+
+⚠️ **CRITICAL**: Do NOT proceed to "First Pass Complete" until Phase 7 is fully executed. The dashboard MUST be generated and reviewed.
 
 ---
 
@@ -2729,8 +2792,13 @@ echo "agentic/metrics-dashboard.html" >> .gitignore
 - ✅ Documented core concepts and architecture
 - ✅ Established patterns (ADRs, exec-plans)
 - ✅ Set up validation and metrics
+- ✅ **Generated metrics dashboard and measured actual quality score** (Phase 7)
 
-**Next steps based on your score**:
+**⚠️ CONFIRMATION**: Did you run Phase 7 above?
+- ❌ **NO** → Go back and run `./agentic/scripts/measure-all-metrics.sh --html` now
+- ✅ **YES** → Continue below with your actual measured score
+
+**Next steps based on your ACTUAL MEASURED score from the dashboard**:
 
 | Score | Rating | Next Step |
 |-------|--------|-----------|
