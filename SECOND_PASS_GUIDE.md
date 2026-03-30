@@ -601,6 +601,14 @@ Document your improvement in `agentic/QUALITY_SCORE.md`:
 **Dashboard**: agentic/metrics-dashboard.html (generated YYYY-MM-DD)
 ```
 
+**Also update manual metrics** (if you haven't already):
+- Find "Quality Metrics" section in QUALITY_SCORE.md
+- Replace placeholder percentages (e.g., "60% documented") with actual values
+- Rename section to "Additional Quality Tracking (Manual - Not Scored)"
+- Add "Last Audited: YYYY-MM-DD"
+
+This prevents stale placeholders from misleading future maintainers.
+
 ### Step 5.5: Commit Changes
 
 ⚠️ **Use your ACTUAL MEASURED scores** from the dashboard (not estimates!)

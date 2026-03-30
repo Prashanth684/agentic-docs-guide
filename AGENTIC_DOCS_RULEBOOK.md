@@ -2339,27 +2339,31 @@ agentic/exec-plans/active/
 
 [List low priority items]
 
-## Quality Metrics
+## Additional Quality Tracking (Manual - Not Scored)
 
-### Documentation Coverage
+> **Note**: This section is manual tracking, not measured by automated scripts.
+> Update to reflect actual coverage (see Phase 7 Step 7.6 for audit instructions).
 
-- **API Types**: X% documented
-- **Controllers**: X% documented
-- **Packages**: X% documented
-- **Workflows**: X% documented
+**Last Audited**: YYYY-MM-DD
 
-### Link Health
+### Code Component Documentation
 
-- **Total Links**: ~X
-- **Broken Links**: 0
-- **External Links**: ~X
-- **Internal Links**: ~X
+- **[Component Type]**: X% documented (N/M components)
+  - Examples: Controllers, Services, APIs, Commands
+  - ✅ Documented: [List components with concept docs/ADRs]
+  - ⚠️ Not yet: [List undocumented]
+- **[Core Packages]**: X% documented (N/M packages)
+- **[User Workflows]**: X% documented (N/M workflows)
 
-### Staleness
+### Link Health (Optional)
+
+- **Status**: Not yet validated
+- **Future**: Add link checker to CI
+
+### Staleness (Optional)
 
 - **Files with TODOs**: X
-- **Files not updated in 90 days**: X
-- **Outdated references**: X
+- **Last major update**: YYYY-MM-DD
 
 ## Validation Checklist
 
@@ -2763,7 +2767,34 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 # - Many broken links
 ```
 
-#### Step 7.6: Archive Dashboard
+#### Step 7.6: Update Manual Metrics in QUALITY_SCORE.md
+
+⚠️ **IMPORTANT**: Automated scripts don't validate the "Quality Metrics" section in QUALITY_SCORE.md (controllers/packages/workflows percentages). These are manual tracking only.
+
+**Action**: Open `agentic/QUALITY_SCORE.md`, find the "Quality Metrics" section, and:
+
+1. **Identify major components** in your codebase (e.g., controllers, services, core packages)
+2. **Count documented vs total**: Check which have concept docs or ADRs
+3. **Update percentages**: Replace template placeholders with actual values
+4. **Rename section**: Change header to "Additional Quality Tracking (Manual - Not Scored)"
+5. **Add audit date**: Include "Last Audited: YYYY-MM-DD"
+
+**Example**:
+```markdown
+## Additional Quality Tracking (Manual - Not Scored)
+
+**Last Audited**: 2026-03-30
+
+- **Controllers**: 67% (2/3 documented in concept docs)
+- **Core Packages**: 100% (all critical packages have concept docs)
+- **User Workflows**: 100% (primary workflows documented)
+```
+
+**Why**: Prevents stale placeholders like "60% documented" from misleading future maintainers.
+
+---
+
+#### Step 7.7: Archive Dashboard
 
 ```bash
 # Add dashboard to git (optional - large file)
@@ -2774,12 +2805,12 @@ echo "agentic/metrics-dashboard.html" >> .gitignore
 ```
 
 **Validation**:
-- [ ] Metrics dashboard generated (`agentic/metrics-dashboard.html` exists)
-- [ ] Dashboard reviewed in browser (opened and inspected)
-- [ ] Actual score from dashboard documented in QUALITY_SCORE.md (not estimated!)
-- [ ] Decision made based on actual score: Skip second pass / Run second pass / Fix gaps
+- [ ] Metrics dashboard generated and reviewed
+- [ ] Actual score documented in QUALITY_SCORE.md
+- [ ] Manual metrics updated (not placeholders)
+- [ ] Decision made: Skip/Run second pass
 
-⚠️ **CRITICAL**: Do NOT proceed to "First Pass Complete" until Phase 7 is fully executed. The dashboard MUST be generated and reviewed.
+⚠️ **CRITICAL**: Do NOT proceed until Phase 7 complete (dashboard generated, manual metrics updated).
 
 ---
 
