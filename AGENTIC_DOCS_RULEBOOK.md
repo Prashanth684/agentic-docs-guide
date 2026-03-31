@@ -77,14 +77,48 @@ Manages operating system configuration and updates for OpenShift nodes via Kuber
 
 ---
 
+## ⚠️ CRITICAL: CHECK FOR REPOSITORY-TYPE-SPECIFIC GUIDANCE
+
+**BEFORE starting Phase 1**, check if this repository type has additional requirements:
+
+### For OpenShift Repositories
+
+**Detection**: Check if `go.mod` contains `github.com/openshift/api` or `github.com/openshift/library-go`
+
+**If OpenShift repository**:
+1. ✅ **READ** [OPENSHIFT_SPECIFIC_GUIDANCE.md](./OPENSHIFT_SPECIFIC_GUIDANCE.md) **COMPLETELY**
+2. ✅ **ADD** to your task list: Create OpenShift-specific reference files
+3. ✅ **NOTE**: The following are **REQUIRED** (not optional):
+   - `agentic/references/enhancement-index.md`
+   - `agentic/references/openshift-apis.yaml`
+   - `agentic/references/openshift-ecosystem.md`
+   - `agentic/references/openshift-operator-patterns-llms.txt`
+   - `agentic/references/openshift-docs-standards.md`
+   - Enhancement references in ADR frontmatter
+   - OpenShift markers in glossary (🔴 ⚫ 🟡)
+
+**Why this matters**: OpenShift repositories need enhancement tracking, API inventory, and ecosystem context. Skipping these files results in incomplete documentation even with a passing quality score.
+
+### For Other Repository Types
+
+Check for additional guidance files:
+```bash
+ls *_SPECIFIC_GUIDANCE.md 2>/dev/null
+```
+
+If found, read them before starting Phase 1.
+
+---
+
 ## Principles Before You Start
 
 ### Rule 0: Read These First (In Order)
-1. Read this entire rulebook before making any changes
-2. Understand the repository's purpose and architecture
-3. Identify what documentation already exists
-4. Plan your changes before executing
-5. VERIFY you understand how to replace placeholders (see above)
+1. **Check for repository-type-specific guidance** (see above)
+2. Read this entire rulebook before making any changes
+3. Understand the repository's purpose and architecture
+4. Identify what documentation already exists
+5. Plan your changes before executing
+6. VERIFY you understand how to replace placeholders (see above)
 
 ### Rule 1: AGENTS.md is a Map, Not a Manual
 - **Maximum length**: 150 lines
@@ -273,6 +307,7 @@ create: agentic/domain/index.md
 create: agentic/decisions/index.md
 create: agentic/references/index.md
 create: agentic/exec-plans/tech-debt-tracker.md
+create: agentic/generated/README.md  # ← Explains what goes here
 
 # Create REQUIRED top-level files (ALL REPOS MUST HAVE THESE)
 create: agentic/DESIGN.md
@@ -283,27 +318,170 @@ create: agentic/SECURITY.md
 create: agentic/QUALITY_SCORE.md
 ```
 
-**Template for index.md**:
+**Template for agentic/generated/README.md**:
 ```markdown
-# [Section Name]
+# Generated Documentation
+
+**Purpose**: Auto-generated documentation that should NOT be manually edited.
+
+## What Goes Here
+
+- **metrics-catalog.md**: Auto-generated from Prometheus metrics in code
+- **package-map.md**: Auto-generated dependency graph
+- **api-reference.md**: Auto-generated API documentation
+- **metrics-dashboard.html**: Quality metrics dashboard (from agentic/scripts/)
+
+## How to Generate
+
+```bash
+# Metrics dashboard (quality score)
+./agentic/scripts/measure-all-metrics.sh --html
+
+# Add other generation commands here as needed
+# Example: go doc -all > agentic/generated/api-reference.md
+```
+
+## Gitignore
+
+Consider adding to `.gitignore` if files are large or regenerated frequently:
+```
+agentic/generated/metrics-dashboard.html
+agentic/generated/package-map.md
+```
+
+## When to Regenerate
+
+- **metrics-dashboard.html**: After each documentation update
+- **Other generated docs**: As part of release process or CI
+```
+
+**Template for index.md files** (customize per directory):
+
+**agentic/design-docs/index.md**:
+```markdown
+# Design Documentation
 
 ## Purpose
-[What this section contains and why it exists]
+Architecture, design philosophy, and component documentation.
 
 ## Contents
 
-- [Document 1](./document-1.md) - Brief description
-- [Document 2](./document-2.md) - Brief description
+**Core**:
+- [Core Beliefs](./core-beliefs.md) - Operating principles and patterns
+
+**Components** (add as you document them):
+- [Component1](./components/component1.md) - Brief description
+- [Component2](./components/component2.md) - Brief description
 
 ## When to Add Here
 
-Add a document here when:
-- [Criterion 1]
-- [Criterion 2]
+- **core-beliefs.md**: Operating principles (created in Phase 3)
+- **components/**: One doc per major component (controller, service, daemon)
+- **diagrams/**: Architecture diagrams (SVG or ASCII)
 
 ## Related Sections
 
-- [Other section](../other-section/) - Relationship
+- [Domain Concepts](../domain/) - What the components manipulate
+- [ADRs](../decisions/) - Why components are designed this way
+```
+
+**agentic/domain/index.md**:
+```markdown
+# Domain Documentation
+
+## Purpose
+Concepts, glossary, and workflows in this system's domain.
+
+## Contents
+
+- [Glossary](./glossary.md) - Term definitions
+
+**Concepts** (add as you document them):
+- [Concept1](./concepts/concept1.md) - Brief description
+- [Concept2](./concepts/concept2.md) - Brief description
+
+**Workflows** (if applicable):
+- [Workflow1](./workflows/workflow1.md) - Brief description
+
+## When to Add Here
+
+- **glossary.md**: All domain terms (alphabetical)
+- **concepts/**: CRDs, packages, key interfaces (one file per concept)
+- **workflows/**: Multi-step processes involving multiple components
+
+## Related Sections
+
+- [Components](../design-docs/components/) - Who implements these concepts
+- [ADRs](../decisions/) - Why concepts are designed this way
+```
+
+**agentic/decisions/index.md**:
+```markdown
+# Architectural Decision Records
+
+## Purpose
+Document why architectural decisions were made.
+
+## Active ADRs
+
+### Accepted
+- [ADR-0001: Decision Title](./adr-0001-decision-title.md) - YYYY-MM-DD
+- [ADR-0002: Decision Title](./adr-0002-decision-title.md) - YYYY-MM-DD
+
+### Proposed
+- [ADR-NNNN: Pending Decision](./adr-NNNN-pending.md) - Under review
+
+## Deprecated/Superseded
+
+- [ADR-XXXX: Old Decision](./adr-xxxx-old.md) - Superseded by ADR-YYYY
+
+## When to Add Here
+
+Create an ADR when:
+- Making a significant architectural choice
+- Choosing between multiple viable alternatives
+- Establishing a new pattern or practice
+- Deprecating an existing approach
+
+Use the [ADR template](./adr-template.md).
+
+## Related Sections
+
+- [Core Beliefs](../design-docs/core-beliefs.md) - Broader principles
+- [Domain Concepts](../domain/concepts/) - What the decisions affect
+```
+
+**agentic/references/index.md**:
+```markdown
+# Reference Documentation
+
+## Purpose
+External knowledge, API catalogs, enhancement tracking, and standards.
+
+## Contents
+
+**OpenShift-Specific** (if applicable):
+- [Enhancement Index](./enhancement-index.md) - Links to design docs
+- [OpenShift APIs](./openshift-apis.yaml) - API inventory
+- [OpenShift Ecosystem](./openshift-ecosystem.md) - Related operators
+- [Operator Patterns](./openshift-operator-patterns-llms.txt) - Implementation patterns
+- [Docs Standards](./openshift-docs-standards.md) - Reference links
+
+**General**:
+- Add other reference material as needed (upstream docs, standards, etc.)
+
+## When to Add Here
+
+Reference docs that agents should consult:
+- Enhancement/design proposal links
+- API catalogs and schemas
+- External documentation pointers
+- Standard patterns and conventions
+
+## Related Sections
+
+- [ADRs](../decisions/) - Reference enhancements in ADRs
+- [Concepts](../domain/concepts/) - Reference APIs in concept docs
 ```
 
 **Validation**:
@@ -818,7 +996,9 @@ See: [Link to detailed pattern doc]
 
 #### Step 4.2: Create Individual Concept Documents
 
-**Task**: For each major domain concept, create a detailed doc.
+**Task**: For each major domain concept (5-15 concepts), create a detailed doc.
+
+**What to document**: CRDs, core packages, key interfaces, data structures, patterns
 
 **Location**: `agentic/domain/concepts/[concept-name].md`
 
@@ -944,6 +1124,203 @@ echo "✅ $concept_file validation complete"
 - [ ] Related concepts are linked bidirectionally
 - [ ] File named correctly: lowercase-with-hyphens.md
 - [ ] Concept type specified in frontmatter (CRD | Package | Interface | Pattern)
+
+#### Step 4.3: Create Workflow Documents (Optional)
+
+**Task**: Document multi-step processes that involve multiple concepts.
+
+**When to create**: If your system has complex workflows (e.g., "How a request flows through the system", "Deployment workflow", "Reconciliation loop")
+
+**Location**: `agentic/domain/workflows/[workflow-name].md`
+
+**Template Structure**:
+```markdown
+---
+workflow: [WorkflowName]
+components: [Component1, Component2, Component3]
+related_concepts: [Concept1, Concept2]
+---
+
+# Workflow: [Workflow Name]
+
+## Overview
+
+[2-3 sentence description of what this workflow accomplishes]
+
+## Participants
+
+| Component | Role | Code Location |
+|-----------|------|---------------|
+| [Component1] | [What it does in this workflow] | [file path] |
+| [Component2] | [What it does in this workflow] | [file path] |
+
+## Steps
+
+### 1. [Step Name]
+
+**Trigger**: [What initiates this step]
+**Actor**: [Component responsible]
+**Action**: [What happens]
+
+```
+[Code snippet or pseudocode]
+```
+
+**Result**: [Output or state change]
+
+### 2. [Next Step]
+...
+
+## Sequence Diagram
+
+```
+[User/System] → [Component A] → [Component B] → [Result]
+   |                |                |
+   v                v                v
+[Action 1]      [Action 2]      [Action 3]
+```
+
+## Error Handling
+
+| Failure Point | Detection | Recovery |
+|---------------|-----------|----------|
+| [Step X fails] | [How detected] | [What happens] |
+
+## Related Concepts
+
+- [Concept1](../concepts/concept1.md) - Used in step X
+- [Concept2](../concepts/concept2.md) - Modified in step Y
+
+## Code Locations
+
+- **Start**: [file:function]
+- **Key logic**: [file:function]
+- **Completion**: [file:function]
+```
+
+**Example workflows**:
+- Request processing flow
+- Reconciliation loop
+- Bootstrap sequence
+- Upgrade workflow
+
+**Validation**:
+- [ ] Workflow has clear start and end
+- [ ] All steps are in order
+- [ ] Components are linked to their docs
+- [ ] Error handling documented
+
+#### Step 4.4: Create Component Documentation (Optional but Recommended)
+
+**Task**: Document major components (controllers, services, daemons, operators).
+
+**When to create**: For repositories with 3+ major components that have distinct responsibilities
+
+**Location**: `agentic/design-docs/components/[component-name].md`
+
+**Template Structure**:
+```markdown
+---
+component: [ComponentName]
+type: [Controller | Service | Daemon | Operator | CLI]
+related: [Component2, Component3]
+---
+
+# Component: [Component Name]
+
+## Purpose
+
+[1-2 sentences: What does this component do and why does it exist?]
+
+## Location
+
+- **Entry Point**: [cmd/component/main.go]
+- **Core Logic**: [pkg/component/]
+- **Tests**: [test/component/]
+
+## Responsibilities
+
+1. **[Responsibility 1]**: [Description]
+2. **[Responsibility 2]**: [Description]
+3. **[Responsibility 3]**: [Description]
+
+## Architecture
+
+```
+[ASCII diagram showing this component's internal structure]
+Example:
+┌─────────────────────────────────┐
+│   [ComponentName]               │
+│                                 │
+│  ┌──────────┐   ┌───────────┐  │
+│  │ Module A │ → │ Module B  │  │
+│  └──────────┘   └───────────┘  │
+└─────────────────────────────────┘
+         ↓                ↑
+    [Output]        [Input from X]
+```
+
+## Interfaces
+
+### Input
+- **[Interface 1]**: [Description, source]
+  - Example: Watches CRD updates via Kubernetes API
+
+### Output
+- **[Interface 1]**: [Description, destination]
+  - Example: Updates status via API, writes to filesystem
+
+## Configuration
+
+| Config Parameter | Type | Default | Purpose |
+|------------------|------|---------|---------|
+| [param-name] | [type] | [value] | [description] |
+
+## Dependencies
+
+- **[Dependency 1]**: [Why needed, version]
+- **[Dependency 2]**: [Why needed, version]
+
+## Observability
+
+### Metrics
+- `[metric_name]`: [Description]
+
+### Logs
+- Key log lines: [What to look for]
+
+### Health Checks
+- Liveness: [What's checked]
+- Readiness: [What's checked]
+
+## Related Components
+
+- [Component2](./component2.md) - [Relationship]
+- [Component3](./component3.md) - [Relationship]
+
+## Related Concepts
+
+- [Concept1](../domain/concepts/concept1.md) - [How used]
+
+## Common Issues
+
+**Issue**: [Problem]
+**Cause**: [Root cause]
+**Fix**: [Solution]
+
+## Code Walkthrough
+
+**Critical paths**:
+1. **[Operation]**: Starts at [file:function], flows through [file:function]
+2. **[Operation]**: Starts at [file:function], flows through [file:function]
+```
+
+**Validation**:
+- [ ] Component purpose is clear
+- [ ] Responsibilities are distinct
+- [ ] Interfaces documented (input/output)
+- [ ] Related to other components
+- [ ] File paths provided
 
 ---
 
@@ -2857,6 +3234,22 @@ grep "OVERALL QUALITY SCORE" agentic/metrics-dashboard.html || echo "❌ No dash
 
 ## Quick Reference
 
+### What Goes Where
+
+| I need to... | Create in | Guidance | Phase |
+|-------------|-----------|----------|-------|
+| Document a component | `agentic/design-docs/components/` | Step 4.4 | 4 |
+| Document a concept (CRD, package, interface) | `agentic/domain/concepts/` | Step 4.2 | 4 |
+| Document a workflow (multi-step process) | `agentic/domain/workflows/` | Step 4.3 | 4 |
+| Define a term | `agentic/domain/glossary.md` | Step 4.1 | 4 |
+| Create an ADR (architectural decision) | `agentic/decisions/` | Step 5.3 | 5 |
+| Track active work | `agentic/exec-plans/active/` | Step 5.4 | 5 |
+| Track tech debt | `agentic/exec-plans/tech-debt-tracker.md` | Step 5.2 | 5 |
+| Link to enhancements (OpenShift) | `agentic/references/enhancement-index.md` | OpenShift guide § 1 | - |
+| List APIs (OpenShift) | `agentic/references/openshift-apis.yaml` | OpenShift guide § 2 | - |
+| Document operator patterns (OpenShift) | `agentic/references/openshift-operator-patterns-llms.txt` | OpenShift guide § 4 | - |
+| Auto-generated docs | `agentic/generated/` | Step 2.2, Phase 7 | 2, 7 |
+
 ### File Naming Conventions
 - Use lowercase
 - Use hyphens for spaces: `custom-resource.md`
@@ -2942,6 +3335,27 @@ Before marking documentation complete:
 ## 🎯 FINAL VALIDATION CHECKLIST
 
 **Before considering documentation complete, ALL of these MUST be true:**
+
+### For OpenShift Repositories
+
+**If this is an OpenShift repository** (check: `grep "github.com/openshift" go.mod`):
+
+```bash
+# Check for OpenShift-specific documentation
+[ -f "agentic/references/enhancement-index.md" ] || echo "⚠️  Consider creating enhancement index"
+[ -f "agentic/references/openshift-apis.yaml" ] || echo "⚠️  Consider creating API inventory"
+[ -f "agentic/references/openshift-ecosystem.md" ] || echo "⚠️  Consider creating ecosystem context"
+
+# Check for OpenShift markers in glossary (if has OpenShift-specific terms)
+grep -q "🔴\|⚫\|🟡" agentic/domain/glossary.md || echo "⚠️  Consider adding OpenShift term markers"
+
+# Check for enhancement refs in ADRs (if features link to enhancements)
+grep -r "enhancement-refs:\|enhancement:" agentic/decisions/ || echo "⚠️  Consider adding enhancement refs to ADRs"
+```
+
+**Note**: Not all OpenShift repos will have enhancements in openshift/enhancements or APIs in openshift/api. Many repos document their own enhancements locally. The checks above are guidelines, not hard requirements.
+
+**Remember**: Check BOTH the repo's own docs/ directory AND external sources (openshift/enhancements, openshift/api) for relevant information.
 
 ### 🚨 MOST IMPORTANT: Benchmark Validation
 

@@ -8,6 +8,28 @@
 
 Before documenting, agents need to discover OpenShift-specific information.
 
+⚠️ **IMPORTANT**: Check BOTH the repository's own documentation AND external sources (openshift/enhancements, openshift/api). Information may exist in both places.
+
+### Step 1: Check Repository's Own Documentation
+
+**Many OpenShift repos document their own enhancements and APIs in docs/**:
+
+```bash
+# Check for enhancement/design documents
+find docs/ -name "*enhancement*" -o -name "*design*" 2>/dev/null
+ls -la docs/enhancements/ 2>/dev/null
+
+# Check for API documentation
+find docs/ -name "*api*" -o -name "*crd*" 2>/dev/null
+
+# Check README for links to designs
+grep -i "enhancement\|design\|proposal" README.md
+```
+
+### Step 2: Check External OpenShift Repositories
+
+**Even if repo has its own docs, also check external sources for additional context.**
+
 ### How to Find Related Repositories
 
 **Check `go.mod` or dependency files**:
@@ -48,7 +70,17 @@ grep -i "related\|depends\|requires" README.md
 
 ### How to Find Enhancement References
 
-**Search enhancement repo**:
+**Check BOTH local docs and openshift/enhancements repo.**
+
+**Local docs** (this repository):
+```bash
+# Many repos have their own enhancement docs
+ls docs/enhancements/ 2>/dev/null
+find docs/ -name "*enhancement*" -o -name "*design*" 2>/dev/null
+grep -r "enhancement\|KEP\|design doc" docs/ 2>/dev/null
+```
+
+**External repo** (openshift/enhancements):
 ```bash
 # Search by repository name
 # https://github.com/openshift/enhancements/search?q=[repo-name]
@@ -159,12 +191,31 @@ upstream-kep: "kubernetes/enhancements#[NNNN]" (if applicable)
 
 Create `agentic/references/enhancement-index.md`:
 
+**Template**:
 ```markdown
 # Enhancement Index
 
+## Repository-Local Enhancements
+
+**Check**: `docs/enhancements/` or `docs/` directory for enhancement docs in this repo.
+
 | Enhancement | Feature | ADR | Concepts |
 |-------------|---------|-----|----------|
-| [#NNNN](link) | [Name] | [Link] | [Links] |
+| [Local Enhancement](../../docs/enhancements/feature.md) | [Name] | [Link to ADR] | [Links to concepts] |
+
+## External Enhancements (openshift/enhancements)
+
+**Note**: List enhancements from openshift/enhancements repo that are relevant to this repository. Check BOTH repo-local docs AND external enhancements - information may exist in both places.
+
+| Enhancement | Feature | ADR | Concepts |
+|-------------|---------|-----|----------|
+| [#NNNN](https://github.com/openshift/enhancements/pull/NNNN) | [Name] | [Link] | [Links] |
+
+## How to Use This Index
+
+- **When implementing a feature**: Check if there's an enhancement doc (local or external) for design context
+- **When documenting a decision**: Link to the relevant enhancement
+- **When onboarding**: Read enhancements to understand "why" behind implementation
 ```
 
 **Why this helps**: Provides design rationale and context for implementation decisions.
