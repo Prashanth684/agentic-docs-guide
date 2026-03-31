@@ -115,11 +115,20 @@ Manages operating system configuration and updates for OpenShift nodes via Kuber
 - Avoid narrative overviews and prescriptive instructions
 - **When in doubt, leave it out** - measure what helps vs. hurts
 
+### Rule 6: Metrics (Phase 7) Are Mandatory
+Phase 7 metrics dashboard is required. "Estimated" scores are not acceptable. See Phase 7.
+
 ---
 
 ## Step-by-Step Implementation Process
 
+⚠️ **ALL PHASES ARE MANDATORY** - Follow phases 1-7 in order. Skipping phases = incomplete work.
+
+---
+
 ### Phase 1: Assessment (READ-ONLY)
+
+⚠️ **DO NOT SKIP THIS PHASE** - Understanding the repository is foundational for all subsequent documentation.
 
 #### Step 1.1: Understand the Repository
 
@@ -223,6 +232,8 @@ identify: Data models
 ---
 
 ### Phase 2: Structure Creation (CREATE DIRECTORIES)
+
+⚠️ **DO NOT SKIP THIS PHASE** - Directory structure is required for all subsequent content creation.
 
 #### Step 2.1: Create Standard Directory Structure
 
@@ -938,11 +949,7 @@ echo "✅ $concept_file validation complete"
 
 ### Phase 5: Plans and Decisions
 
-### ⚠️ CRITICAL: Initial Implementation vs Ongoing Maintenance
-
-**If you are implementing agentic documentation for the FIRST TIME in a repository**:
-
-You MUST create initial content, not just templates. Empty directories with only templates result in low quality scores and incomplete documentation.
+⚠️ **DO NOT SKIP** - Create initial content (2-3 ADRs, 1 exec-plan), not just templates. Required for first-time implementations.
 
 **Required for Initial Implementation**:
 - ✅ At least 2-3 ADRs documenting EXISTING architectural decisions
@@ -2613,15 +2620,19 @@ find agentic/exec-plans/active -name "*.md" | wc -l
 - [ ] At least 2-3 ADRs exist (verify with: `find agentic/decisions -name "adr-*.md" -not -name "*template*" | wc -l`)
 - [ ] At least 1 active exec-plan exists (verify with: `find agentic/exec-plans/active -name "*.md" | wc -l`)
 
-⚠️ **STOP!** Before proceeding to "First Pass Complete", you **MUST** run Phase 7 below.
+---
+
+## ⛔ STOP - Run Phase 7 (Metrics) Before Proceeding
+
+**Do NOT** write summaries, commit messages, or "estimated" scores. **Run Phase 7 first.**
 
 ---
 
 ### Phase 7: Generate Metrics Dashboard (FIRST PASS COMPLETION) 🎯
 
-⚠️ **THIS PHASE IS MANDATORY** - Do not skip! This measures your actual quality score.
+🚨 **MANDATORY - DO NOT SKIP** 🚨
 
-**Purpose**: Generate metrics dashboard to visualize quality score and identify areas for improvement.
+Measures ACTUAL quality score. "Estimated" scores are NOT acceptable. Without this, first pass is incomplete.
 
 **Prerequisites**:
 - ✅ Scripts copied in Phase 2 Step 2.3 (required!)
@@ -2805,31 +2816,28 @@ echo "agentic/metrics-dashboard.html" >> .gitignore
 ```
 
 **Validation**:
-- [ ] Metrics dashboard generated and reviewed
-- [ ] Actual score documented in QUALITY_SCORE.md
-- [ ] Manual metrics updated (not placeholders)
-- [ ] Decision made: Skip/Run second pass
-
-⚠️ **CRITICAL**: Do NOT proceed until Phase 7 complete (dashboard generated, manual metrics updated).
+```bash
+# MANDATORY: Verify Phase 7 complete
+[ -f "agentic/metrics-dashboard.html" ] && echo "✅ Dashboard" || (echo "❌ No dashboard - run Step 7.1" && exit 1)
+grep -q "Score.*TBD" agentic/QUALITY_SCORE.md && echo "❌ Update score from dashboard" && exit 1 || echo "✅ Score documented"
+grep "OVERALL QUALITY SCORE" agentic/metrics-dashboard.html || echo "❌ Can't extract score"
+```
+**If any fails, GO BACK to Step 7.1.**
 
 ---
 
 ## 🎉 First Pass Complete!
 
-**Congratulations!** You've completed the initial agentic documentation implementation.
+**⛔ Verify Phase 7 first**: `[ -f "agentic/metrics-dashboard.html" ] && echo "✅" || echo "❌ GO BACK"`
 
-**What you achieved**:
-- ✅ Created navigable documentation structure
-- ✅ Documented core concepts and architecture
-- ✅ Established patterns (ADRs, exec-plans)
-- ✅ Set up validation and metrics
-- ✅ **Generated metrics dashboard and measured actual quality score** (Phase 7)
-
-**⚠️ CONFIRMATION**: Did you run Phase 7 above?
-- ❌ **NO** → Go back and run `./agentic/scripts/measure-all-metrics.sh --html` now
-- ✅ **YES** → Continue below with your actual measured score
+**Your ACTUAL measured score** (from dashboard):
+```bash
+grep "OVERALL QUALITY SCORE" agentic/metrics-dashboard.html || echo "❌ No dashboard = Phase 7 incomplete"
+```
 
 **Next steps based on your ACTUAL MEASURED score from the dashboard**:
+
+⚠️ **NOTE**: If you don't have an actual measured score, you did NOT complete Phase 7. Go back now.
 
 | Score | Rating | Next Step |
 |-------|--------|-----------|
@@ -2838,6 +2846,7 @@ echo "agentic/metrics-dashboard.html" >> .gitignore
 | 70-79 | Fair 🟡 | Recommended: [SECOND_PASS_GUIDE.md](./SECOND_PASS_GUIDE.md) |
 | 60-69 | Poor 🟠 | Required: Fix gaps, then second pass |
 | <60 | Critical 🔴 | Fix critical issues, re-run first pass |
+| "TBD" or "Estimated" | ❌ INVALID | You did NOT run metrics. Go to Phase 7. |
 
 **Questions?**
 - Dashboard unclear? See [SCORING_GUIDE.md](./SCORING_GUIDE.md)
@@ -3004,6 +3013,83 @@ head -n1 agentic/domain/concepts/*.md | grep "^---$"
 # Can parse YAML
 yamllint .github/workflows/validate-agentic-docs.yml
 ```
+
+---
+
+## 📋 Process Adherence Audit
+
+**Run after all phases to verify you followed the process (not just created output).**
+
+```bash
+#!/bin/bash
+# Retrospective Process Audit - checks HOW you worked, not just WHAT you created
+
+echo "==================================================================="
+echo "PROCESS ADHERENCE AUDIT"
+echo "==================================================================="
+
+# Phase 1: Assessment
+echo -e "\n[Phase 1] Can you explain repo in 1 sentence? (indicates you read it)"
+
+# Phase 2: Structure
+echo -e "\n[Phase 2] Checking directories and scripts..."
+required_dirs="design-docs/components domain/concepts exec-plans/active decisions scripts"
+missing=0
+for dir in $required_dirs; do
+  [ ! -d "agentic/$dir" ] && echo "❌ Missing: agentic/$dir" && missing=$((missing+1))
+done
+[ $missing -eq 0 ] && echo "✅ Directories exist" || echo "❌ $missing directories missing"
+
+[ -f "agentic/scripts/measure-all-metrics.sh" ] && echo "✅ Scripts copied" || \
+  echo "❌ Scripts missing (explains why Phase 7 skipped!)"
+
+# Phase 3: Core Docs
+echo -e "\n[Phase 3] Checking AGENTS.md..."
+lines=$(wc -l < AGENTS.md)
+[ $lines -le 150 ] && echo "✅ AGENTS.md: $lines lines" || echo "❌ AGENTS.md too long: $lines"
+
+# Phase 4: Domain
+echo -e "\n[Phase 4] Checking concepts..."
+concepts=$(find agentic/domain/concepts -name "*.md" 2>/dev/null | wc -l)
+[ $concepts -ge 5 ] && echo "✅ $concepts concept docs" || echo "❌ Only $concepts (need 5+)"
+
+# Phase 5: Initial Content (CRITICAL)
+echo -e "\n[Phase 5] Checking initial content (NOT just templates)..."
+adrs=$(find agentic/decisions -name "adr-*.md" -not -name "*template*" 2>/dev/null | wc -l)
+plans=$(find agentic/exec-plans/active -name "*.md" 2>/dev/null | wc -l)
+[ $adrs -ge 2 ] && echo "✅ $adrs ADRs" || echo "❌ Only $adrs ADRs (need 2-3)"
+[ $plans -ge 1 ] && echo "✅ $plans exec-plan" || echo "❌ No exec-plans (need 1+)"
+
+# Phase 6: Required Files
+echo -e "\n[Phase 6] Checking required top-level files..."
+required="DESIGN.md DEVELOPMENT.md TESTING.md RELIABILITY.md SECURITY.md QUALITY_SCORE.md"
+missing=0
+for f in $required; do
+  [ ! -f "agentic/$f" ] && echo "❌ Missing: $f" && missing=$((missing+1))
+done
+[ $missing -eq 0 ] && echo "✅ All 6 required files" || echo "❌ $missing files missing"
+
+# Phase 7: Metrics (MOST CRITICAL)
+echo -e "\n[Phase 7] Did you RUN metrics? (not estimate)"
+if [ -f "agentic/metrics-dashboard.html" ]; then
+  echo "✅ Dashboard exists"
+  if grep -q "Score.*TBD\|Estimated.*Score" agentic/QUALITY_SCORE.md 2>/dev/null; then
+    echo "❌ QUALITY_SCORE.md has TBD/Estimated (didn't update from dashboard!)"
+  else
+    echo "✅ Actual score documented"
+    echo -e "\nYour measured score:"
+    grep "OVERALL QUALITY SCORE" agentic/metrics-dashboard.html 2>/dev/null || echo "❌ Can't extract score"
+  fi
+else
+  echo "❌ CRITICAL: No dashboard found - Phase 7 NOT completed!"
+fi
+
+echo -e "\n==================================================================="
+echo "If any ❌ above, you did NOT complete the first pass."
+echo "==================================================================="
+```
+
+**Red flags**: Missing directories, no scripts, <5 concepts, no ADRs, no exec-plans, missing top-level files, no dashboard.
 
 ---
 
